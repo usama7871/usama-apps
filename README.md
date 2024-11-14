@@ -82,28 +82,3 @@ To run the project locally, follow these steps:
 This project is licensed under the MIT License.
 
 ---
-
-This `README.md` provides a comprehensive overview of your project, guiding others on how to set it up and contribute. Feel free to modify it based on additional details or adjustments you may need!
-```
-
-### Changes Made:
-- Removed the merge conflict markers (`<<<<<<<`, `=======`, `>>>>>>>`).
-- Ensured a clean and formatted `README.md` without unnecessary repetition.
-- Cleaned up the **Installation** section for clarity.
-
-Now, your `README.md` is ready to be updated. You can follow these steps to commit and push the changes to GitHub:
-
-1. **Add the changes to staging**:
-   ```bash
-   git add README.md
-   ```
-
-2. **Commit the changes**:
-   ```bash
-   git commit -m "Fix merge conflicts and update README"
-   ```
-
-3. **Push to GitHub**:
-   ```bash
-   git push origin main
-   ```
