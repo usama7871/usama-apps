@@ -1,100 +1,136 @@
-// components/VideoPlayer.tsx
-
 import { useRef, useEffect, useState, useCallback } from 'react';
 import { VideoPlayerProps } from '../types';
 
-// Extend the VideoPlayerProps interface to include a function for setting the video reference
 interface ExtendedVideoPlayerProps extends VideoPlayerProps {
-  setVideoRef: (ref: HTMLVideoElement) => void; // Function to pass video element reference to parent component
+  setVideoRef: (ref: HTMLVideoElement) => void;
 }
 
-// Custom hook to manage video controls and state
-const useVideoPlayer = (videoRef: React.RefObject<HTMLVideoElement>, onTimeUpdate?: (currentTime: number) => void) => {
+const useVideoPlayer = (
+  videoRef: React.RefObject<HTMLVideoElement>,
+  onTimeUpdate?: (currentTime: number) => void
+) => {
   const [videoState, setVideoState] = useState({
-    isPlaying: false,  // Indicates if the video is currently playing
-    volume: 1,        // Current volume level (0.0 to 1.0)
-    isMuted: false,    // Indicates if the video is muted
-    progress: 0,      // Current playback progress percentage
-    isFullscreen: false, // Indicates if the video is in fullscreen mode
+    isPlaying: false,
+    volume: 1,
+    isMuted: false,
+    progress: 0,
+    isFullscreen: false,
+    playbackRate: 1,
+    currentTime: 0,
+    duration: 0,
   });
 
-  // Toggle play/pause functionality
   const togglePlayPause = useCallback(() => {
     if (videoRef.current) {
       if (videoState.isPlaying) {
-        videoRef.current.pause(); // Pause the video if it's currently playing
+        videoRef.current.pause();
       } else {
-        videoRef.current.play(); // Play the video if it's paused
+        videoRef.current.play();
       }
-      setVideoState((prev) => ({ ...prev, isPlaying: !prev.isPlaying })); // Update play state
+      setVideoState((prev) => ({ ...prev, isPlaying: !prev.isPlaying }));
     }
   }, [videoRef, videoState.isPlaying]);
 
-  // Handle volume change from the volume slider
-  const handleVolumeChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    const newVolume = parseFloat(event.target.value);
-    if (videoRef.current) {
-      videoRef.current.volume = newVolume; // Set new volume on the video element
-      setVideoState((prev) => ({ ...prev, volume: newVolume, isMuted: newVolume === 0 })); // Update volume and mute state
-    }
-  }, [videoRef]);
+  const handleVolumeChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const newVolume = parseFloat(event.target.value);
+      if (videoRef.current) {
+        videoRef.current.volume = newVolume;
+        setVideoState((prev) => ({ ...prev, volume: newVolume, isMuted: newVolume === 0 }));
+      }
+    },
+    [videoRef]
+  );
 
-  // Toggle mute/unmute functionality
   const toggleMute = useCallback(() => {
     if (videoRef.current) {
-      const muted = !videoState.isMuted; // Determine new mute state
-      videoRef.current.muted = muted; // Set mute state on the video element
-      setVideoState((prev) => ({ ...prev, isMuted: muted })); // Update mute state
+      const muted = !videoState.isMuted;
+      videoRef.current.muted = muted;
+      setVideoState((prev) => ({ ...prev, isMuted: muted }));
     }
   }, [videoRef, videoState.isMuted]);
 
-  // Update playback progress
   const handleTimeUpdate = useCallback(() => {
     if (videoRef.current) {
-      const currentTime = videoRef.current.currentTime; // Get current time of the video
-      const duration = videoRef.current.duration; // Get total duration of the video
-      setVideoState((prev) => ({ ...prev, progress: (currentTime / duration) * 100 })); // Calculate and update progress percentage
-      if (onTimeUpdate) onTimeUpdate(currentTime); // Call onTimeUpdate callback if provided
+      const currentTime = videoRef.current.currentTime;
+      const duration = videoRef.current.duration;
+      setVideoState((prev) => ({
+        ...prev,
+        currentTime,
+        duration,
+        progress: (currentTime / duration) * 100,
+      }));
+      if (onTimeUpdate) onTimeUpdate(currentTime);
     }
   }, [videoRef, onTimeUpdate]);
 
-  // Handle fullscreen toggle
+  const handleSeek = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      if (videoRef.current) {
+        const newTime = (parseFloat(event.target.value) / 100) * videoRef.current.duration;
+        videoRef.current.currentTime = newTime;
+      }
+    },
+    [videoRef]
+  );
+
   const toggleFullscreen = useCallback(() => {
     if (videoRef.current) {
       if (!document.fullscreenElement) {
-        videoRef.current.requestFullscreen()
-          .then(() => setVideoState((prev) => ({ ...prev, isFullscreen: true })))
-          .catch(console.error);
+        videoRef.current.requestFullscreen().catch(console.error);
+        setVideoState((prev) => ({ ...prev, isFullscreen: true }));
       } else {
-        document.exitFullscreen()
-          .then(() => setVideoState((prev) => ({ ...prev, isFullscreen: false })))
-          .catch(console.error);
+        document.exitFullscreen().catch(console.error);
+        setVideoState((prev) => ({ ...prev, isFullscreen: false }));
       }
     }
   }, [videoRef]);
 
-  // Handle seeking to a specific time in the video
-  const handleSeek = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSkip = useCallback(
+    (time: number) => {
+      if (videoRef.current) {
+        videoRef.current.currentTime = Math.min(
+          Math.max(videoRef.current.currentTime + time, 0),
+          videoRef.current.duration
+        );
+      }
+    },
+    [videoRef]
+  );
+
+  const handlePlaybackRateChange = useCallback(
+    (rate: number) => {
+      if (videoRef.current) {
+        videoRef.current.playbackRate = rate;
+        setVideoState((prev) => ({ ...prev, playbackRate: rate }));
+      }
+    },
+    [videoRef]
+  );
+
+  const restartVideo = useCallback(() => {
     if (videoRef.current) {
-      const newTime = (parseFloat(event.target.value) / 100) * videoRef.current.duration; // Convert percentage to actual time
-      videoRef.current.currentTime = newTime; // Set the current time of the video
+      videoRef.current.currentTime = 0;
+      setVideoState((prev) => ({ ...prev, progress: 0 }));
     }
   }, [videoRef]);
 
   return {
-    videoState,          // Current state of the video player
-    togglePlayPause,     // Function to toggle play/pause
-    handleVolumeChange,  // Function to handle volume changes
-    toggleMute,          // Function to toggle mute/unmute
-    handleTimeUpdate,    // Function to handle time updates
-    toggleFullscreen,     // Function to toggle fullscreen mode
-    handleSeek,          // Function to handle seeking
+    videoState,
+    togglePlayPause,
+    handleVolumeChange,
+    toggleMute,
+    handleTimeUpdate,
+    toggleFullscreen,
+    handleSeek,
+    handleSkip,
+    handlePlaybackRateChange,
+    restartVideo,
   };
 };
 
-// The VideoPlayer component handles video playback, controls, and state management
 const VideoPlayer: React.FC<ExtendedVideoPlayerProps> = ({ onTimeUpdate, setVideoRef }) => {
-  const videoRef = useRef<HTMLVideoElement | null>(null); // Ref for the video element
+  const videoRef = useRef<HTMLVideoElement | null>(null);
   const {
     videoState,
     togglePlayPause,
@@ -103,66 +139,101 @@ const VideoPlayer: React.FC<ExtendedVideoPlayerProps> = ({ onTimeUpdate, setVide
     handleTimeUpdate,
     toggleFullscreen,
     handleSeek,
-  } = useVideoPlayer(videoRef, onTimeUpdate); // Use custom hook for video player logic
+    handleSkip,
+    handlePlaybackRateChange,
+    restartVideo,
+  } = useVideoPlayer(videoRef, onTimeUpdate);
 
-  // Effect to set the video reference when the component mounts
   useEffect(() => {
     if (videoRef.current) {
-      setVideoRef(videoRef.current); // Pass video reference to the parent component
+      setVideoRef(videoRef.current);
     }
   }, [setVideoRef]);
 
   return (
-    <div className="video-player">
-      {/* Video element */}
+    <div className="video-player" style={{ maxWidth: '100%', margin: '0 auto', padding: '20px' }}>
       <video
-        ref={videoRef} // Assign video ref
-        src="/videos/lesson1.mp4" // Source of the video
-        width="100%" // Full width
-        onTimeUpdate={handleTimeUpdate} // Update time on playback
-        onClick={togglePlayPause} // Toggle play/pause on click
-        onDoubleClick={toggleFullscreen} // Toggle fullscreen on double-click
-        style={{ cursor: 'pointer' }} // Change cursor to pointer for user feedback
+        ref={videoRef}
+        src="/videos/lesson1.mp4"
+        width="100%"
+        onTimeUpdate={handleTimeUpdate}
+        onClick={togglePlayPause}
+        onDoubleClick={toggleFullscreen}
+        style={{
+          cursor: 'pointer',
+          borderRadius: '8px',
+          boxShadow: '0 4px 15px rgba(0, 0, 0, 0.3)',
+        }}
       />
 
-      {/* Controls for the video */}
-      <div className="controls" style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 0' }}>
-        {/* Play/Pause button */}
-        <button onClick={togglePlayPause} aria-label={videoState.isPlaying ? 'Pause video' : 'Play video'}>
-          {videoState.isPlaying ? 'Pause' : 'Play'}
-        </button>
+      <div
+        className="controls"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '10px',
+          padding: '10px 0',
+          flexWrap: 'wrap',
+          justifyContent: 'space-between',
+        }}
+      >
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <button className="control-button" onClick={togglePlayPause}>
+            {videoState.isPlaying ? 'Pause' : 'Play'}
+          </button>
+          <button className="control-button" onClick={() => handleSkip(-10)}>
+            ⏪ -10s
+          </button>
+          <button className="control-button" onClick={() => handleSkip(10)}>
+            ⏩ +10s
+          </button>
+          <button className="control-button" onClick={restartVideo}>
+            ⏮ Restart
+          </button>
+        </div>
 
-        {/* Progress bar for video playback */}
         <input
           type="range"
           min="0"
           max="100"
-          value={videoState.progress} // Current playback progress
-          onChange={handleSeek} // Seek video on change
-          aria-label="Video progress" // Accessibility label
-          style={{ flex: 1 }} // Flexible width
+          value={videoState.progress}
+          onChange={handleSeek}
+          style={{ flex: 1, margin: '0 10px' }}
         />
+        <span>
+          {new Date(videoState.currentTime * 1000).toISOString().substr(11, 8)} /{' '}
+          {new Date(videoState.duration * 1000).toISOString().substr(11, 8)}
+        </span>
 
-        {/* Mute/Unmute button */}
-        <button onClick={toggleMute} aria-label={videoState.isMuted ? 'Unmute' : 'Mute'}>
-          {videoState.isMuted ? 'Unmute' : 'Mute'}
-        </button>
-
-        {/* Volume control slider */}
-        <input
-          type="range"
-          min="0"
-          max="1"
-          step="0.1"
-          value={videoState.volume} // Current volume level
-          onChange={handleVolumeChange} // Update volume on change
-          aria-label="Volume" // Accessibility label
-        />
-
-        {/* Fullscreen toggle button */}
-        <button onClick={toggleFullscreen} aria-label={videoState.isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}>
-          {videoState.isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}
-        </button>
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <button className="control-button" onClick={toggleMute}>
+            {videoState.isMuted ? 'Unmute' : 'Mute'}
+          </button>
+          <input
+            type="range"
+            min="0"
+            max="1"
+            step="0.1"
+            value={videoState.volume}
+            onChange={handleVolumeChange}
+            style={{ width: '100px' }}
+          />
+          <button className="control-button" onClick={toggleFullscreen}>
+            {videoState.isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}
+          </button>
+          <select
+            className="control-button"
+            value={videoState.playbackRate}
+            onChange={(e) => handlePlaybackRateChange(parseFloat(e.target.value))}
+            style={{ padding: '4px' }}
+          >
+            {[0.5, 1, 1.5, 2].map((rate) => (
+              <option key={rate} value={rate}>
+                {rate}x
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
     </div>
   );

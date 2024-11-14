@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import VideoPlayer from '../../components/VideoPlayer';
 import SlideViewer from '../../components/SlideViewer';
+import { FaArrowLeft, FaArrowRight, FaRedo } from 'react-icons/fa';
 
 interface SlideData {
   timestamp: number;
@@ -9,9 +10,9 @@ interface SlideData {
 }
 
 const Project1: React.FC = () => {
-  const [currentSlide, setCurrentSlide] = useState<number>(1);
+  const [currentSlide, setCurrentSlide] = useState(1);
   const [slideTimeline, setSlideTimeline] = useState<SlideData[]>([]);
-  const [videoProgress, setVideoProgress] = useState<number>(0);
+  const [videoProgress, setVideoProgress] = useState(0);
   const [videoRef, setVideoRef] = useState<HTMLVideoElement | null>(null);
   const [loadingStatus, setLoadingStatus] = useState<'loading' | 'loaded' | 'error'>('loading');
 
@@ -20,7 +21,6 @@ const Project1: React.FC = () => {
       try {
         const response = await fetch('/slideMetadata.json');
         if (!response.ok) throw new Error('Failed to load slide metadata');
-
         const data = await response.json();
         setSlideTimeline(data.slides);
         setLoadingStatus('loaded');
@@ -34,14 +34,8 @@ const Project1: React.FC = () => {
 
   const handleTimeUpdate = useCallback((currentTime: number) => {
     const matchedSlide = slideTimeline.slice().reverse().find((slide) => currentTime >= slide.timestamp);
-    
-    if (matchedSlide) {
-      setCurrentSlide(matchedSlide.slide);
-    }
-
-    if (videoRef?.duration) {
-      setVideoProgress((currentTime / videoRef.duration) * 100);
-    }
+    if (matchedSlide) setCurrentSlide(matchedSlide.slide);
+    if (videoRef?.duration) setVideoProgress((currentTime / videoRef.duration) * 100);
   }, [slideTimeline, videoRef]);
 
   const handleVideoRef = (ref: HTMLVideoElement) => setVideoRef(ref);
@@ -70,73 +64,61 @@ const Project1: React.FC = () => {
     }
   };
 
-  const currentSlideData = useMemo(() => {
-    return slideTimeline.find((slide) => slide.slide === currentSlide);
-  }, [currentSlide, slideTimeline]);
+  const currentSlideData = useMemo(() => slideTimeline.find((slide) => slide.slide === currentSlide), [currentSlide, slideTimeline]);
 
   return (
-    <div className="container">
+    <div className="project-container">
       <h1 className="project-title">Topic: The US</h1>
-
       {loadingStatus === 'loading' ? (
-        <div className="loading-spinner">Loading...</div> // Spinner or animation
+        <div className="loading-spinner">Loading...</div>
       ) : loadingStatus === 'error' ? (
         <p className="error-message" aria-live="assertive">
           Error loading slide data. Please try again later.
         </p>
       ) : (
-        <>
-          <VideoPlayer onTimeUpdate={handleTimeUpdate} setVideoRef={handleVideoRef} />
-          
-          {currentSlideData && (
-            <>
+        <div className="content-wrapper">
+          <div className="video-and-controls">
+            <VideoPlayer onTimeUpdate={handleTimeUpdate} setVideoRef={handleVideoRef} />
+            <div className="progress-bar" aria-label="Video Progress">
+              <div
+                className="progress-bar-fill"
+                style={{
+                  width: `${videoProgress}%`,
+                }}
+              />
+            </div>
+          </div>
+          <div className="slide-and-navigation">
+            {currentSlideData && (
               <SlideViewer
                 currentSlide={currentSlide}
                 onSlideClick={goToSlide}
                 images={currentSlideData.images}
               />
-
-              <div className="button-container" style={{ display: 'flex', gap: '10px', marginTop: '1rem' }}>
-                <button
-                  className="nav-button"
-                  onClick={goToPreviousSlide}
-                  disabled={currentSlide === 1}
-                  aria-label="Previous Slide"
-                >
-                  Previous
-                </button>
-                <button
-                  className="nav-button"
-                  onClick={goToNextSlide}
-                  disabled={currentSlide === slideTimeline.length}
-                  aria-label="Next Slide"
-                >
-                  Next
-                </button>
-                <button
-                  className="restart-button"
-                  onClick={restartPresentation}
-                  aria-label="Restart Presentation"
-                >
-                  Restart
-                </button>
-              </div>
-            </>
-          )}
-
-          <div className="progress-bar" aria-label="Video Progress" style={{ marginTop: '1rem', width: '100%' }}>
-            <div
-              className="progress-bar-fill"
-              style={{
-                width: `${videoProgress}%`,
-                height: '8px',
-                backgroundColor: '#3498db',
-                borderRadius: '4px',
-                transition: 'width 0.2s ease',
-              }}
-            />
+            )}
+            <div className="button-container">
+              <button
+                className="nav-button"
+                onClick={goToPreviousSlide}
+                disabled={currentSlide === 1}
+                aria-label="Previous Slide"
+              >
+                <FaArrowLeft />
+              </button>
+              <button
+                className="nav-button"
+                onClick={goToNextSlide}
+                disabled={currentSlide === slideTimeline.length}
+                aria-label="Next Slide"
+              >
+                <FaArrowRight />
+              </button>
+              <button className="restart-button" onClick={restartPresentation} aria-label="Restart Presentation">
+                <FaRedo />
+              </button>
+            </div>
           </div>
-        </>
+        </div>
       )}
     </div>
   );

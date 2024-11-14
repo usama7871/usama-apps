@@ -22,7 +22,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease; /* Smooth transitions for all elements */
+  transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease; /* Smooth transitions for all elements */
   scrollbar-width: thin; /* Thinner scrollbar for a sleek look (Firefox) */
   scrollbar-color: var(--primary-color) var(--background-color); /* Custom scrollbar colors (Firefox) */
 }
@@ -82,16 +82,42 @@ body::-webkit-scrollbar-track {
   }
 }
 
+
 /* Main Container */
 .container {
   max-width: 1200px; /* Ensures maximum width for larger screens */
   margin: 20px auto; /* Added vertical margin for spacing */
   padding: 30px; /* Increased padding for better spacing */
-  background-color: rgba(255, 255, 255, 0.1); /* Slightly increased transparency for contrast */
-  border-radius: 12px; /* Soft rounded corners for a modern touch */
-  box-shadow: 0 6px 30px rgba(0, 0, 0, 0.15); /* Enhanced shadow for more depth */
-  backdrop-filter: blur(5px); /* Optional: blur effect for the background */
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.15)); /* Subtle gradient for a liquid feel */
+  border-radius: 20px; /* Softer, more rounded corners for a modern feel */
+  box-shadow: 0 6px 30px rgba(0, 0, 0, 0.35), 0 2px 10px rgba(0, 0, 0, 0.1); /* Enhanced shadow for more depth */
+  backdrop-filter: blur(12px); /* Increased blur for a more transparent effect */
+  transition: all 0.3s ease-in-out; /* Smooth transition for hover effects */
+  overflow: hidden; /* Ensures no child elements overflow the rounded borders */
+  position: relative;
+  z-index: 1;
 }
+
+/* Hover Effect for Container */
+.container:hover {
+  transform: scale(1.03); /* Slightly scale the container for interactive effect */
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45), 0 4px 15px rgba(0, 0, 0, 0.25); /* Stronger shadow on hover for depth */
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.3)); /* Darker gradient on hover */
+  backdrop-filter: blur(15px); /* More blur on hover for stronger transparent effect */
+}
+
+/* Optional: Add a dynamic border effect on focus or active state */
+.container:focus-within {
+  border: 2px solid rgba(0, 255, 255, 0.7); /* Neon border effect when any child element is focused */
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.5), 0 0 30px rgba(0, 255, 255, 0.3); /* Neon glow around the container */
+}
+
+
+
+
+
+
+
 
 
 /* Headings */
@@ -216,171 +242,319 @@ p {
   margin-right: auto; /* Centered in the container */
 }
 
+
+
+
+
+
 /* Button Container */
 .button-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-wrap: wrap; /* Support multiple buttons wrapping */
-  gap: 16px; /* Uniform spacing between buttons */
+  gap: 16px;
   margin: 24px 0;
+  flex-wrap: wrap;
 }
 
-/* Buttons */
+/* General Button Styles */
 button {
-  padding: 14px 32px; /* Balanced padding for better click area */
+  padding: 14px 32px;
   border: none;
-  border-radius: 14px; /* Slightly more rounded for a modern feel */
-  background: linear-gradient(135deg, #003e4d, #004d40); /* Dynamic dark gradient */
-  color: #e0f7fa;
-  cursor: pointer;
+  border-radius: 50px; /* Smooth rounded edges */
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: bold;
   text-transform: uppercase;
-  letter-spacing: 1.3px; /* Slightly wider spacing for a clean look */
-  box-shadow: 
-    0 6px 20px rgba(0, 150, 136, 0.3), 
-    inset 0 0 8px rgba(0, 200, 160, 0.3); /* Combined inner and outer glow */
-  transition: 
-    transform 0.3s ease, 
-    box-shadow 0.4s ease, 
-    background 0.4s ease, 
-    color 0.3s ease;
+  letter-spacing: 1.5px;
+  cursor: pointer;
   position: relative;
   overflow: hidden;
-  z-index: 0;
+  color: #fff;
+  transition: all 0.4s ease-in-out;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  isolation: isolate; /* Prevent overlapping effects */
 }
 
-/* Inner Glow Effect */
-button::before {
+/* Unique Background Colors for Each Button */
+button:nth-child(1) {
+  background: linear-gradient(135deg, #ff512f, #dd2476); /* Sunset gradient */
+}
+button:nth-child(2) {
+  background: linear-gradient(135deg, #36d1dc, #5b86e5); /* Sky gradient */
+}
+button:nth-child(3) {
+  background: linear-gradient(135deg, #8e2de2, #4a00e0); /* Purple glow */
+}
+button:nth-child(4) {
+  background: linear-gradient(135deg, #11998e, #38ef7d); /* Tropical green */
+}
+button:nth-child(5) {
+  background: linear-gradient(135deg, #fc5c7d, #6a82fb); /* Cotton candy */
+}
+button:nth-child(6) {
+  background: linear-gradient(135deg, #ee0979, #ff6a00); /* Fiery orange */
+}
+
+/* Glow & Interactive Hover Effects */
+button:hover {
+  transform: translateY(-8px) scale(1.1) rotate(3deg); /* Add slight tilt */
+  box-shadow: 0 12px 30px rgba(255, 255, 255, 0.5), 0 8px 25px rgba(0, 0, 0, 0.4);
+  filter: brightness(1.2);
+}
+button:hover::after {
   content: "";
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(0, 255, 204, 0.25), transparent 70%);
-  opacity: 0;
-  transform: translate(-50%, -50%) scale(0.5);
-  transition: opacity 0.5s, transform 0.5s;
+  width: 400%;
+  height: 400%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.3), transparent 80%);
+  transform: translate(-50%, -50%) scale(0.8);
   z-index: -1;
-}
-
-/* Hover Effects */
-button:hover {
-  transform: translateY(-4px) scale(1.07);
-  box-shadow: 
-    0 8px 25px rgba(0, 200, 160, 0.6), 
-    inset 0 0 12px rgba(0, 255, 200, 0.4); /* Amplified glow */
-  background: linear-gradient(135deg, #005b5d, #007d75); /* Brighter gradient */
-  color: #ffffff; /* Text shifts to white for better contrast */
-}
-
-button:hover::before {
+  transition: transform 0.5s ease-in-out, opacity 0.5s;
   opacity: 1;
-  transform: translate(-50%, -50%) scale(1);
+}
+button:hover::after {
+  transform: translate(-50%, -50%) scale(1.5);
+  opacity: 0;
 }
 
-/* Active State */
-button:active {
-  transform: scale(0.96);
-  background: linear-gradient(135deg, #003a42, #004547); /* Subtle darker tone */
-  box-shadow: 
-    0 4px 15px rgba(0, 150, 136, 0.6), 
-    inset 0 0 8px rgba(0, 200, 160, 0.4); /* Reduced shadow for "pressed" feel */
-}
-
-/* Tech-Inspired Border Effect */
-button::after {
+/* Ripple Effect on Click */
+button:active::before {
   content: "";
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: 14px;
-  border: 2px solid transparent;
-  background: linear-gradient(135deg, rgba(0, 255, 204, 0.5), rgba(0, 150, 136, 0.5));
-  background-clip: padding-box;
-  opacity: 0;
-  transition: opacity 0.4s, transform 0.4s;
-  pointer-events: none;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: ripple 0.6s ease-out;
   z-index: 1;
 }
-
-button:hover::after {
-  opacity: 1;
-  transform: scale(1.05);
-}
-
-/* Focus State for Accessibility */
-button:focus {
-  outline: none;
-  box-shadow: 
-    0 0 8px rgba(0, 255, 200, 0.8), 
-    inset 0 0 8px rgba(0, 200, 160, 0.5);
-}
-
-/* Responsive Font Scaling */
-@media (max-width: 768px) {
-  button {
-    padding: 12px 24px;
-    font-size: 0.9rem;
+@keyframes ripple {
+  0% {
+    width: 0;
+    height: 0;
+    opacity: 0.5;
+  }
+  100% {
+    width: 400%;
+    height: 400%;
+    opacity: 0;
   }
 }
 
+/* Responsive Sizes for Buttons */
+button:nth-child(odd) {
+  padding: 18px 40px;
+  font-size: 1.2rem;
+}
+button:nth-child(even) {
+  padding: 12px 28px;
+  font-size: 0.9rem;
+}
+
+/* Advanced Animations for Hover */
+button:nth-child(1):hover {
+  animation: swing 1.2s ease-in-out;
+}
+button:nth-child(2):hover {
+  animation: float 1.2s ease-in-out infinite;
+}
+button:nth-child(3):hover {
+  animation: heartbeat 1.5s ease-in-out infinite;
+}
+button:nth-child(4):hover {
+  animation: bounce 1s ease-in-out infinite;
+}
+button:nth-child(5):hover {
+  animation: vibrate 0.6s ease-in-out infinite;
+}
+button:nth-child(6):hover {
+  animation: rotate-scale 1.5s ease-in-out infinite;
+}
+
+/* Keyframe Animations */
+@keyframes swing {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(10deg); }
+  50% { transform: rotate(-10deg); }
+  75% { transform: rotate(5deg); }
+  100% { transform: rotate(0deg); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
+@keyframes vibrate {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-3px); }
+  50% { transform: translateX(3px); }
+  75% { transform: translateX(-1px); }
+}
+
+@keyframes rotate-scale {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(1.2) rotate(180deg); }
+}
+
+@keyframes ripple {
+  0% {
+    width: 0;
+    height: 0;
+    opacity: 0.5;
+  }
+  100% {
+    width: 400%;
+    height: 400%;
+    opacity: 0;
+  }
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-15px); }
+  60% { transform: translateY(-8px); }
+}
+
+
+
+
+
+
+
+
+
+
+
+
 /* Enhanced Image Styles */
 .slide-image {
-  border-radius: 12px; /* Rounded corners for a modern look */
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Slightly deeper shadow for more depth */
-  max-width: 100%; /* Ensures responsive sizing */
+  border-radius: 16px; /* Slightly more rounded for a softer feel */
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25); /* Deeper shadow for better depth */
+  max-width: 100%; /* Ensures responsiveness */
   height: auto; /* Maintains aspect ratio */
-  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Added transition for box-shadow */
+  object-fit: cover; /* Ensures consistent cropping if dimensions vary */
+  transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease; /* Smooth transitions */
 }
 
 /* Image Hover Effect */
 .slide-image:hover {
-  transform: scale(1.05); /* Slight zoom effect on hover */
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3); /* Enhanced shadow on hover for emphasis */
+  transform: scale(1.07) rotate(1deg); /* Enhanced zoom with slight tilt */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); /* More dramatic shadow */
+  filter: brightness(1.1); /* Slight brightness boost for pop effect */
 }
 
 /* Progress Bar */
 .progress-bar {
   width: 100%; /* Full width of the container */
   height: 12px; /* Fixed height for the progress bar */
-  background: rgba(0, 0, 0, 0.1); /* Light background for visibility */
-  border-radius: 5px; /* Rounded corners for a softer appearance */
-  overflow: hidden; /* Ensures child elements are clipped to the bar */
+  background: rgba(0, 0, 0, 0.08); /* Softer background for a modern look */
+  border-radius: 8px; /* More rounded corners */
+  overflow: hidden; /* Ensures child elements are clipped */
+  position: relative; /* Enables gradient effect */
 }
 
 /* Progress Bar Fill */
 .progress-bar-fill {
   height: 100%; /* Fills the height of the progress bar */
-  background: var(--primary-color); /* Primary color for the filled portion */
-  border-radius: 5px; /* Rounded corners for a cohesive look */
-  transition: width 0.7s ease; /* Smooth width transition */
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+  background: linear-gradient(90deg, var(--primary-color), var(--primary-accent-color)); /* Gradient for the fill */
+  border-radius: 8px; /* Matches container */
+  transition: width 0.7s ease-in-out; /* Smoother width transition */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3); /* Deeper shadow for focus */
 }
 
+/* Progress Bar Animation */
+@keyframes progress {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
 
 /* Responsive Styles for Mobile */
 @media (max-width: 768px) {
-  h1 { font-size: 2rem; }
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 12px;
+  }
   button {
     width: 100%;
     margin: 10px 0;
+    padding: 14px;
+    font-size: 1rem;
+  }
+  .slide-image {
+    width: 100%;
+    border-radius: 12px; /* Adjust for smaller screens */
+  }
+  .container {
     padding: 12px;
   }
-  .slide-image { width: 100%; }
-  .container { padding: 10px; }
+  .progress-bar {
+    height: 10px; /* Adjusted size for mobile */
+  }
 }
 
 /* Accessible Focus Styles */
 button:focus,
 input[type="range"]:focus {
-  outline: 2px solid var(--primary-color);
-  outline-offset: 2px;
+  outline: 3px solid var(--primary-accent-color);
+  outline-offset: 4px;
+  box-shadow: 0 0 8px var(--primary-accent-color);
 }
+
+/* Hover and Active Button States */
+button:hover {
+  background-color: var(--primary-hover-color); /* Use hover state color */
+  transform: translateY(-4px); /* Slight lift effect */
+}
+
+button:active {
+  background-color: var(--primary-active-color);
+  transform: translateY(2px); /* Button pressed effect */
+}
+
+/* Optional Glow Animation for Images */
+.slide-image:focus-visible {
+  box-shadow: 0 0 12px var(--primary-color), 0 0 8px rgba(0, 0, 0, 0.2);
+  transform: scale(1.05);
+}
+
+/* Optional Progress Bar Pulse Effect */
+.progress-bar-fill:hover {
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 16px rgba(255, 255, 255, 0.6);
+  }
+}
+
+
+
+
+
+
+
+
+
+
 
 /* Header Styles */
 .header {
@@ -522,6 +696,29 @@ input[type="range"]:focus {
   }
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /* Main Content Styles */
 .main-content {
   padding: 60px 30px; /* Increased padding for better spacing and visual comfort */
@@ -589,6 +786,29 @@ input[type="range"]:focus {
     padding: 15px; /* Adjusted padding for smaller screens */
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /* Footer Styles */
 .footer {

@@ -2,84 +2,91 @@ import Image from 'next/image';
 import { SlideViewerProps } from '../types';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 
-// ExtendedSlideViewerProps extends SlideViewerProps by adding additional properties for handling slides
 interface ExtendedSlideViewerProps extends SlideViewerProps {
-  onSlideClick: (slideNumber: number) => void;  // Callback function triggered on slide click
-  images: string[];                             // Array of image URLs associated with the current slide
+  onSlideClick: (slideNumber: number) => void;
+  images: string[];
 }
 
-// SlideViewer component displays a sequence of images with zoom, fullscreen, and navigation controls
 const SlideViewer: React.FC<ExtendedSlideViewerProps> = ({
   currentSlide,
   onSlideClick,
   images,
 }) => {
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);    // Current index of the displayed image
-  const [isZoomed, setIsZoomed] = useState(false);                  // Tracks if the image is in zoomed-in mode
-  const [zoomLevel, setZoomLevel] = useState(1);                    // Level of zoom applied to the image
-  const [isFullscreen, setIsFullscreen] = useState(false);          // Tracks if the component is in fullscreen mode
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [zoomLevel, setZoomLevel] = useState(1);
+  const [rotation, setRotation] = useState(0);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
-  // Change the displayed image based on direction (-1 for previous, 1 for next)
   const changeImage = useCallback(
     (direction: 1 | -1) => {
-      setCurrentImageIndex((prevIndex) => 
-        (prevIndex + direction + images.length) % images.length // Wraps around the images array
+      setCurrentImageIndex((prevIndex) =>
+        (prevIndex + direction + images.length) % images.length
       );
     },
     [images.length]
   );
 
-  // Toggle zoom state
-  const toggleZoom = () => setIsZoomed((prev) => !prev);
+  const handleZoomIn = () => setZoomLevel((prev) => Math.min(prev + 0.5, 4));
+  const handleZoomOut = () => setZoomLevel((prev) => Math.max(prev - 0.5, 1));
 
-  // Toggle fullscreen mode
+  const rotateLeft = () => setRotation((prev) => (prev - 90) % 360);
+  const rotateRight = () => setRotation((prev) => (prev + 90) % 360);
+
+  const resetView = () => {
+    setZoomLevel(1);
+    setRotation(0);
+  };
+
+  const downloadImage = () => {
+    const link = document.createElement('a');
+    link.href = images[currentImageIndex];
+    link.download = `slide-${currentImageIndex + 1}.jpg`;
+    link.click();
+  };
+
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().catch((err) => console.error(err));
+      document.documentElement.requestFullscreen().catch(console.error);
       setIsFullscreen(true);
     } else {
-      document.exitFullscreen().catch((err) => console.error(err));
+      document.exitFullscreen().catch(console.error);
       setIsFullscreen(false);
     }
   };
 
-  // Zoom in and out functionality
-  const handleZoomIn = () => setZoomLevel((prev) => Math.min(prev + 0.5, 3));
-  const handleZoomOut = () => setZoomLevel((prev) => Math.max(prev - 0.5, 1));
-
-  // Memoize current image source to optimize rendering
   const currentImageSrc = useMemo(() => images[currentImageIndex], [currentImageIndex, images]);
 
-  // Reset zoom level when exiting fullscreen
   useEffect(() => {
     if (!isFullscreen) {
-      setIsZoomed(false);
-      setZoomLevel(1);
+      resetView();
     }
   }, [isFullscreen]);
 
-  // Handle keyboard navigation
-  const handleKeyDown = useCallback((event: KeyboardEvent) => {
-    switch (event.key) {
-      case 'ArrowLeft':
-        changeImage(-1); // Navigate to the previous image
-        break;
-      case 'ArrowRight':
-        changeImage(1); // Navigate to the next image
-        break;
-      case 'Escape':
-        if (isFullscreen) toggleFullscreen(); // Exit fullscreen on Escape
-        break;
-      case 'Enter':
-      case ' ':
-        toggleZoom(); // Toggle zoom on Enter or Space
-        break;
-      default:
-        break;
-    }
-  }, [changeImage, isFullscreen]);
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      switch (event.key) {
+        case 'ArrowLeft':
+          changeImage(-1);
+          break;
+        case 'ArrowRight':
+          changeImage(1);
+          break;
+        case 'r':
+          resetView();
+          break;
+        case '[':
+          rotateLeft();
+          break;
+        case ']':
+          rotateRight();
+          break;
+        default:
+          break;
+      }
+    },
+    [changeImage]
+  );
 
-  // Attach keyboard event listener
   useEffect(() => {
     window.addEventListener('keydown', handleKeyDown);
     return () => {
@@ -89,8 +96,7 @@ const SlideViewer: React.FC<ExtendedSlideViewerProps> = ({
 
   return (
     <div
-      className={`slide-viewer ${isZoomed ? 'zoomed' : ''} ${isFullscreen ? 'fullscreen' : ''}`}
-      aria-label="Slide Viewer"
+      className={`slide-viewer ${isFullscreen ? 'fullscreen' : ''}`}
       style={{
         maxWidth: isFullscreen ? '100%' : '80%',
         padding: '1rem',
@@ -102,7 +108,7 @@ const SlideViewer: React.FC<ExtendedSlideViewerProps> = ({
     >
       <div
         className="image-container"
-        onClick={() => onSlideClick(currentSlide)} // Trigger callback on slide click
+        onClick={() => onSlideClick(currentSlide)}
         style={{
           display: 'flex',
           justifyContent: 'center',
@@ -112,31 +118,50 @@ const SlideViewer: React.FC<ExtendedSlideViewerProps> = ({
         }}
       >
         <button onClick={() => changeImage(-1)} aria-label="Previous image" disabled={currentImageIndex === 0}>
-          &#10094; {/* Left arrow symbol for previous */}
+          &#10094;
         </button>
 
         <div
           className="image-wrapper"
-          onClick={toggleZoom} // Toggle zoom on image click
-          style={{ cursor: isZoomed ? 'zoom-out' : 'zoom-in', transition: 'transform 0.3s ease' }}
+          style={{
+            cursor: 'pointer',
+            transform: `scale(${zoomLevel}) rotate(${rotation}deg)`,
+            transition: 'transform 0.3s ease',
+          }}
         >
           <Image
             src={currentImageSrc}
-            alt={`Slide ${currentSlide}`} // Descriptive alt text for accessibility
-            width={isFullscreen ? 800 : 400} // Dynamic width based on fullscreen state
-            height={isFullscreen ? 600 : 300} // Dynamic height based on fullscreen state
-            style={{ transform: `scale(${zoomLevel})`, objectFit: 'cover' }} // Apply zoom level
+            alt={`Slide ${currentImageIndex + 1} of ${images.length}`}
+            width={isFullscreen ? 800 : 400}
+            height={isFullscreen ? 600 : 300}
+            style={{ objectFit: 'cover' }}
           />
         </div>
 
         <button onClick={() => changeImage(1)} aria-label="Next image" disabled={currentImageIndex === images.length - 1}>
-          &#10095; {/* Right arrow symbol for next */}
+          &#10095;
         </button>
       </div>
 
       <div className="controls" style={{ marginTop: '1rem', display: 'flex', gap: '10px' }}>
-        <button onClick={handleZoomIn} aria-label="Zoom In" disabled={zoomLevel >= 3}>🔍+</button>
-        <button onClick={handleZoomOut} aria-label="Zoom Out" disabled={zoomLevel <= 1}>🔍-</button>
+        <button onClick={handleZoomIn} aria-label="Zoom In" disabled={zoomLevel >= 4}>
+          🔍+
+        </button>
+        <button onClick={handleZoomOut} aria-label="Zoom Out" disabled={zoomLevel <= 1}>
+          🔍-
+        </button>
+        <button onClick={rotateLeft} aria-label="Rotate Left">
+          ↺
+        </button>
+        <button onClick={rotateRight} aria-label="Rotate Right">
+          ↻
+        </button>
+        <button onClick={resetView} aria-label="Reset View">
+          ⟳ Reset
+        </button>
+        <button onClick={downloadImage} aria-label="Download Image">
+          ⬇ Download
+        </button>
         <button onClick={toggleFullscreen} aria-label={isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}>
           {isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}
         </button>
@@ -146,7 +171,7 @@ const SlideViewer: React.FC<ExtendedSlideViewerProps> = ({
         {images.map((_, index) => (
           <span
             key={index}
-            onClick={() => setCurrentImageIndex(index)} // Set current image index on indicator click
+            onClick={() => setCurrentImageIndex(index)}
             aria-label={`Slide ${index + 1}`}
             style={{
               width: '10px',
@@ -158,8 +183,14 @@ const SlideViewer: React.FC<ExtendedSlideViewerProps> = ({
           />
         ))}
       </div>
+
+      <div style={{ marginTop: '1rem' }}>
+        <p>
+          Slide {currentImageIndex + 1} of {images.length}
+        </p>
+      </div>
     </div>
   );
 };
 
-export default SlideViewer;  // Export SlideViewer for use in other components
+export default SlideViewer;
