@@ -1,11 +1,3 @@
-<<<<<<< HEAD
-Here's a professional `README.md` for your Next.js project:
-
----
-=======
-
->>>>>>> c5f1d05be98b8dae0cefa31035bfe1343cf1ccba
-
 # Educational Project Website
 
 This project is a Next.js-based website designed to provide an interactive learning experience, showcasing educational videos and synchronized presentation slides. The project includes a user-friendly interface for navigating through various educational content, organized into separate projects with unique pages for each.
@@ -50,20 +42,12 @@ To run the project locally, follow these steps:
 
 1. Clone the repository:
    ```bash
-<<<<<<< HEAD
-   git clone https://github.com/yourusername/your-repository.git
-=======
    git clone https://github.com/usama7871/usama-apps.git
->>>>>>> c5f1d05be98b8dae0cefa31035bfe1343cf1ccba
    ```
 
 2. Navigate to the project directory:
    ```bash
-<<<<<<< HEAD
-   cd your-repository
-=======
    cd usama-apps
->>>>>>> c5f1d05be98b8dae0cefa31035bfe1343cf1ccba
    ```
 
 3. Install the dependencies:
@@ -81,7 +65,7 @@ To run the project locally, follow these steps:
 ## Technologies Used
 
 - **Next.js**: React framework for building server-side rendered applications.
-- **TypeScript**: JavaScript with type safety for better development experience.
+- **TypeScript**: JavaScript with type safety for a better development experience.
 - **React**: A JavaScript library for building user interfaces.
 - **CSS**: Styling for layout and design (includes responsive design).
 
@@ -92,7 +76,6 @@ To run the project locally, follow these steps:
 3. Make your changes and commit them (`git commit -am 'Add new feature'`).
 4. Push to the branch (`git push origin feature-name`).
 5. Open a pull request with a description of your changes.
-<<<<<<< HEAD
 
 ## License
 
@@ -101,12 +84,26 @@ This project is licensed under the MIT License.
 ---
 
 This `README.md` provides a comprehensive overview of your project, guiding others on how to set it up and contribute. Feel free to modify it based on additional details or adjustments you may need!
-=======
+```
 
-## License
+### Changes Made:
+- Removed the merge conflict markers (`<<<<<<<`, `=======`, `>>>>>>>`).
+- Ensured a clean and formatted `README.md` without unnecessary repetition.
+- Cleaned up the **Installation** section for clarity.
 
-This project is licensed under the MIT License.
+Now, your `README.md` is ready to be updated. You can follow these steps to commit and push the changes to GitHub:
 
----
+1. **Add the changes to staging**:
+   ```bash
+   git add README.md
+   ```
 
->>>>>>> c5f1d05be98b8dae0cefa31035bfe1343cf1ccba
+2. **Commit the changes**:
+   ```bash
+   git commit -m "Fix merge conflicts and update README"
+   ```
+
+3. **Push to GitHub**:
+   ```bash
+   git push origin main
+   ```
