@@ -1,6 +1,10 @@
+<<<<<<< HEAD
 Here's a professional `README.md` for your Next.js project:
 
 ---
+=======
+
+>>>>>>> c5f1d05be98b8dae0cefa31035bfe1343cf1ccba
 
 # Educational Project Website
 
@@ -46,12 +50,20 @@ To run the project locally, follow these steps:
 
 1. Clone the repository:
    ```bash
+<<<<<<< HEAD
    git clone https://github.com/yourusername/your-repository.git
+=======
+   git clone https://github.com/usama7871/usama-apps.git
+>>>>>>> c5f1d05be98b8dae0cefa31035bfe1343cf1ccba
    ```
 
 2. Navigate to the project directory:
    ```bash
+<<<<<<< HEAD
    cd your-repository
+=======
+   cd usama-apps
+>>>>>>> c5f1d05be98b8dae0cefa31035bfe1343cf1ccba
    ```
 
 3. Install the dependencies:
@@ -80,6 +92,7 @@ To run the project locally, follow these steps:
 3. Make your changes and commit them (`git commit -am 'Add new feature'`).
 4. Push to the branch (`git push origin feature-name`).
 5. Open a pull request with a description of your changes.
+<<<<<<< HEAD
 
 ## License
 
@@ -88,3 +101,12 @@ This project is licensed under the MIT License.
 ---
 
 This `README.md` provides a comprehensive overview of your project, guiding others on how to set it up and contribute. Feel free to modify it based on additional details or adjustments you may need!
+=======
+
+## License
+
+This project is licensed under the MIT License.
+
+---
+
+>>>>>>> c5f1d05be98b8dae0cefa31035bfe1343cf1ccba
