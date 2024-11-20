@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState, useCallback } from 'react';
+import { useRef, useEffect, useState, useCallback, useMemo } from 'react';
 import { VideoPlayerProps } from '../types';
 
 interface ExtendedVideoPlayerProps extends VideoPlayerProps {
@@ -18,6 +18,7 @@ const useVideoPlayer = (
     playbackRate: 1,
     currentTime: 0,
     duration: 0,
+    buffered: 0,
   });
 
   const togglePlayPause = useCallback(() => {
@@ -54,11 +55,15 @@ const useVideoPlayer = (
     if (videoRef.current) {
       const currentTime = videoRef.current.currentTime;
       const duration = videoRef.current.duration;
+      const buffered = videoRef.current.buffered.length
+        ? videoRef.current.buffered.end(videoRef.current.buffered.length - 1)
+        : 0;
       setVideoState((prev) => ({
         ...prev,
         currentTime,
         duration,
         progress: (currentTime / duration) * 100,
+        buffered: (buffered / duration) * 100,
       }));
       if (onTimeUpdate) onTimeUpdate(currentTime);
     }
@@ -150,6 +155,11 @@ const VideoPlayer: React.FC<ExtendedVideoPlayerProps> = ({ onTimeUpdate, setVide
     }
   }, [setVideoRef]);
 
+  const formattedTime = useMemo(() => {
+    const format = (time: number) => new Date(time * 1000).toISOString().substr(11, 8);
+    return `${format(videoState.currentTime)} / ${format(videoState.duration)}`;
+  }, [videoState.currentTime, videoState.duration]);
+
   return (
     <div className="video-player" style={{ maxWidth: '100%', margin: '0 auto', padding: '20px' }}>
       <video
@@ -165,78 +175,59 @@ const VideoPlayer: React.FC<ExtendedVideoPlayerProps> = ({ onTimeUpdate, setVide
           boxShadow: '0 4px 15px rgba(0, 0, 0, 0.3)',
         }}
       />
-
-      <div
-        className="controls"
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '10px',
-          padding: '10px 0',
-          flexWrap: 'wrap',
-          justifyContent: 'space-between',
-        }}
-      >
-        <div style={{ display: 'flex', gap: '10px' }}>
-          <button className="control-button" onClick={togglePlayPause}>
-            {videoState.isPlaying ? 'Pause' : 'Play'}
-          </button>
-          <button className="control-button" onClick={() => handleSkip(-10)}>
-            ⏪ -10s
-          </button>
-          <button className="control-button" onClick={() => handleSkip(10)}>
-            ⏩ +10s
-          </button>
-          <button className="control-button" onClick={restartVideo}>
-            ⏮ Restart
-          </button>
-        </div>
-
+      <div className="controls" style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+        <button aria-label="Play/Pause" onClick={togglePlayPause}>
+          {videoState.isPlaying ? 'Pause' : 'Play'}
+        </button>
+        <button aria-label="Rewind 10 seconds" onClick={() => handleSkip(-10)}>
+          ⏪ -10s
+        </button>
+        <button aria-label="Forward 10 seconds" onClick={() => handleSkip(10)}>
+          ⏩ +10s
+        </button>
+        <button aria-label="Restart Video" onClick={restartVideo}>
+          ⏮ Restart
+        </button>
         <input
           type="range"
           min="0"
           max="100"
           value={videoState.progress}
           onChange={handleSeek}
-          style={{ flex: 1, margin: '0 10px' }}
+          aria-label="Seek"
         />
-        <span>
-          {new Date(videoState.currentTime * 1000).toISOString().substr(11, 8)} /{' '}
-          {new Date(videoState.duration * 1000).toISOString().substr(11, 8)}
-        </span>
-
-        <div style={{ display: 'flex', gap: '10px' }}>
-          <button className="control-button" onClick={toggleMute}>
-            {videoState.isMuted ? 'Unmute' : 'Mute'}
-          </button>
-          <input
-            type="range"
-            min="0"
-            max="1"
-            step="0.1"
-            value={videoState.volume}
-            onChange={handleVolumeChange}
-            style={{ width: '100px' }}
-          />
-          <button className="control-button" onClick={toggleFullscreen}>
-            {videoState.isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}
-          </button>
-          <select
-            className="control-button"
-            value={videoState.playbackRate}
-            onChange={(e) => handlePlaybackRateChange(parseFloat(e.target.value))}
-            style={{ padding: '4px' }}
-          >
-            {[0.5, 1, 1.5, 2].map((rate) => (
-              <option key={rate} value={rate}>
-                {rate}x
-              </option>
-            ))}
-          </select>
-        </div>
+        <span>{formattedTime}</span>
+        <button aria-label="Mute/Unmute" onClick={toggleMute}>
+          {videoState.isMuted ? 'Unmute' : 'Mute'}
+        </button>
+        <input
+          type="range"
+          min="0"
+          max="1"
+          step="0.1"
+          value={videoState.volume}
+          onChange={handleVolumeChange}
+          aria-label="Volume"
+        />
+        <button aria-label="Fullscreen Toggle" onClick={toggleFullscreen}>
+          {videoState.isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}
+        </button>
+        <select
+          aria-label="Playback Rate"
+          value={videoState.playbackRate}
+          onChange={(e) => handlePlaybackRateChange(parseFloat(e.target.value))}
+        >
+          {[0.5, 1, 1.5, 2].map((rate) => (
+            <option key={rate} value={rate}>
+              {rate}x
+            </option>
+          ))}
+        </select>
       </div>
     </div>
   );
 };
 
 export default VideoPlayer;
+
+  
