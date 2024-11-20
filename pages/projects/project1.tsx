@@ -69,17 +69,27 @@ const Project1: React.FC = () => {
 
   // Go to the next slide
   const goToNextSlide = useCallback(() => {
-    if (currentSlide < slideTimeline.length) {
-      goToSlideManually(currentSlide + 1);
+    const nextSlide = currentSlide + 1;
+    if (nextSlide <= slideTimeline.length) {
+      goToSlideManually(nextSlide);
+      if (videoRef) {
+        const nextSlideTimestamp = slideTimeline.find(slide => slide.slide === nextSlide)?.timestamp || 0;
+        videoRef.currentTime = nextSlideTimestamp;  // Sync video time with slide timestamp
+      }
     }
-  }, [currentSlide, slideTimeline.length, goToSlideManually]);
+  }, [currentSlide, slideTimeline.length, slideTimeline, videoRef, goToSlideManually]);
 
   // Go to the previous slide
   const goToPreviousSlide = useCallback(() => {
-    if (currentSlide > 1) {
-      goToSlideManually(currentSlide - 1);
+    const prevSlide = currentSlide - 1;
+    if (prevSlide >= 1) {
+      goToSlideManually(prevSlide);
+      if (videoRef) {
+        const prevSlideTimestamp = slideTimeline.find(slide => slide.slide === prevSlide)?.timestamp || 0;
+        videoRef.currentTime = prevSlideTimestamp;  // Sync video time with slide timestamp
+      }
     }
-  }, [currentSlide, goToSlideManually]);
+  }, [currentSlide, slideTimeline, videoRef, goToSlideManually]);
 
   // Restart the presentation
   const restartPresentation = useCallback(() => {
@@ -180,4 +190,3 @@ const Project1: React.FC = () => {
 };
 
 export default Project1;
-
