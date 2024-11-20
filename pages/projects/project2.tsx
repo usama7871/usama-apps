@@ -16,6 +16,7 @@ const Project1: React.FC = () => {
   const [videoRef, setVideoRef] = useState<HTMLVideoElement | null>(null);
   const [loadingStatus, setLoadingStatus] = useState<'loading' | 'loaded' | 'error'>('loading');
 
+  // Fetch slide metadata
   useEffect(() => {
     const fetchSlideData = async () => {
       try {
@@ -29,42 +30,100 @@ const Project1: React.FC = () => {
         setLoadingStatus('error');
       }
     };
+
     fetchSlideData();
   }, []);
 
-  const handleTimeUpdate = useCallback((currentTime: number) => {
-    const matchedSlide = slideTimeline.slice().reverse().find((slide) => currentTime >= slide.timestamp);
-    if (matchedSlide) setCurrentSlide(matchedSlide.slide);
-    if (videoRef?.duration) setVideoProgress((currentTime / videoRef.duration) * 100);
-  }, [slideTimeline, videoRef]);
+  // Synchronize slides with video playback
+  const handleTimeUpdate = useCallback(
+    (currentTime: number) => {
+      const matchedSlide = slideTimeline
+        .slice()
+        .reverse()
+        .find((slide) => currentTime >= slide.timestamp);
 
-  const handleVideoRef = (ref: HTMLVideoElement) => setVideoRef(ref);
+      if (matchedSlide) setCurrentSlide(matchedSlide.slide);
 
-  const goToSlide = (slideNumber: number) => {
-    const targetSlide = slideTimeline.find((s) => s.slide === slideNumber);
-    if (targetSlide && videoRef) {
-      setCurrentSlide(slideNumber);
-      videoRef.currentTime = targetSlide.timestamp;
+      if (videoRef?.duration) {
+        setVideoProgress((currentTime / videoRef.duration) * 100);
+      }
+    },
+    [slideTimeline, videoRef]
+  );
+
+  // Assign video element reference
+  const handleVideoRef = useCallback((ref: HTMLVideoElement) => {
+    setVideoRef(ref);
+  }, []);
+
+  // Navigate slides manually without syncing video
+  const goToSlideManually = useCallback(
+    (slideNumber: number) => {
+      const targetSlide = slideTimeline.find((s) => s.slide === slideNumber);
+      if (targetSlide) {
+        setCurrentSlide(slideNumber); // Update slide without affecting video
+      }
+    },
+    [slideTimeline]
+  );
+
+  // Go to the next slide
+  const goToNextSlide = useCallback(() => {
+    const nextSlide = currentSlide + 1;
+    if (nextSlide <= slideTimeline.length) {
+      goToSlideManually(nextSlide);
+      if (videoRef) {
+        const nextSlideTimestamp = slideTimeline.find(slide => slide.slide === nextSlide)?.timestamp || 0;
+        videoRef.currentTime = nextSlideTimestamp;  // Sync video time with slide timestamp
+      }
     }
-  };
+  }, [currentSlide, slideTimeline.length, slideTimeline, videoRef, goToSlideManually]);
 
-  const goToNextSlide = () => {
-    if (currentSlide < slideTimeline.length) goToSlide(currentSlide + 1);
-  };
+  // Go to the previous slide
+  const goToPreviousSlide = useCallback(() => {
+    const prevSlide = currentSlide - 1;
+    if (prevSlide >= 1) {
+      goToSlideManually(prevSlide);
+      if (videoRef) {
+        const prevSlideTimestamp = slideTimeline.find(slide => slide.slide === prevSlide)?.timestamp || 0;
+        videoRef.currentTime = prevSlideTimestamp;  // Sync video time with slide timestamp
+      }
+    }
+  }, [currentSlide, slideTimeline, videoRef, goToSlideManually]);
 
-  const goToPreviousSlide = () => {
-    if (currentSlide > 1) goToSlide(currentSlide - 1);
-  };
-
-  const restartPresentation = () => {
+  // Restart the presentation
+  const restartPresentation = useCallback(() => {
     if (videoRef) {
       videoRef.currentTime = 0;
       setCurrentSlide(1);
       setVideoProgress(0);
     }
-  };
+  }, [videoRef]);
 
-  const currentSlideData = useMemo(() => slideTimeline.find((slide) => slide.slide === currentSlide), [currentSlide, slideTimeline]);
+  // Handle keyboard shortcuts
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      if (event.key === 'ArrowRight') {
+        goToNextSlide();
+      } else if (event.key === 'ArrowLeft') {
+        goToPreviousSlide();
+      }
+    },
+    [goToNextSlide, goToPreviousSlide]
+  );
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [handleKeyDown]);
+
+  // Current slide data
+  const currentSlideData = useMemo(
+    () => slideTimeline.find((slide) => slide.slide === currentSlide),
+    [currentSlide, slideTimeline]
+  );
 
   return (
     <div className="project-container">
@@ -77,6 +136,7 @@ const Project1: React.FC = () => {
         </p>
       ) : (
         <div className="content-wrapper">
+          {/* Video player with progress bar */}
           <div className="video-and-controls">
             <VideoPlayer onTimeUpdate={handleTimeUpdate} setVideoRef={handleVideoRef} />
             <div className="progress-bar" aria-label="Video Progress">
@@ -88,15 +148,18 @@ const Project1: React.FC = () => {
               />
             </div>
           </div>
+
+          {/* Slide viewer with navigation */}
           <div className="slide-and-navigation">
             {currentSlideData && (
               <SlideViewer
                 currentSlide={currentSlide}
-                onSlideClick={goToSlide}
+                onSlideClick={goToSlideManually}
                 images={currentSlideData.images}
               />
             )}
             <div className="button-container">
+              {/* Previous Slide Button */}
               <button
                 className="nav-button"
                 onClick={goToPreviousSlide}
@@ -105,6 +168,7 @@ const Project1: React.FC = () => {
               >
                 <FaArrowLeft />
               </button>
+              {/* Next Slide Button */}
               <button
                 className="nav-button"
                 onClick={goToNextSlide}
@@ -113,6 +177,7 @@ const Project1: React.FC = () => {
               >
                 <FaArrowRight />
               </button>
+              {/* Restart Button */}
               <button className="restart-button" onClick={restartPresentation} aria-label="Restart Presentation">
                 <FaRedo />
               </button>
@@ -125,4 +190,3 @@ const Project1: React.FC = () => {
 };
 
 export default Project1;
-            
