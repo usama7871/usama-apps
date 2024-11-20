@@ -71,3 +71,8 @@ export interface HeaderProps {
 export interface FooterProps {
   text: string;
 }
+//edited below
+export interface VideoPlayerProps {
+  onTimeUpdate: (currentTime: number) => void;
+  setVideoRef: (ref: HTMLVideoElement) => void;
+}
