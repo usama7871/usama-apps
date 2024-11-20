@@ -7,7 +7,7 @@
       "description": "An overview of the first educational project.",
       "images": [
         "/slides/slide1-image1.png",
-        "/slides/slide1-image2.png",        
+        "/slides/slide1-image2.png"        
       ]
     },
     {
@@ -17,8 +17,9 @@
       "description": "Detailed explanation of core concepts covered in this project.",
       "images": [
         "/slides/slide2-image1.png",
-        "/slides/slide2-image2.png",       
+        "/slides/slide2-image2.png"        
       ]
-    }   
+    } 
+    
   ]
 }
