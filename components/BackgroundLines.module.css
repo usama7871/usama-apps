@@ -7,37 +7,31 @@
   height: 100%;
   z-index: -1;
   overflow: hidden;
-  background: linear-gradient(135deg, #1e293b, #0f172a); /* Cool gradient background */
-  animation: gradientShift 15s infinite alternate ease-in-out;
+  background: linear-gradient(120deg, #1e293b, #0f172a); /* Subtle gradient background */
+  animation: gradientShift 10s infinite alternate ease-in-out;
 }
 
 /* Base styles for circles */
 .circle {
   position: absolute;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.2), transparent);
-  opacity: 0.5;
-  animation: 
-    pulse 8s infinite ease-in-out, 
-    rotate 12s infinite linear, 
-    moveX 10s infinite ease-in-out, 
-    colorShift 6s infinite ease-in-out,
-    hoverFloat 5s infinite alternate ease-in-out;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1), transparent);
+  opacity: 0.6;
+  animation: float 8s infinite ease-in-out, scaleUp 12s infinite alternate ease-in-out;
   mix-blend-mode: overlay;
-  transform-origin: center center;
-  filter: blur(4px); /* Soft glow effect */
+  filter: blur(6px); /* Adds a glowing effect */
 }
 
 /* Circle sizes and positions */
-.circle1 {
-  width: 300px;
-  height: 300px;
-  top: 10%;
+.circle:nth-child(1) {
+  width: 250px;
+  height: 250px;
+  top: 15%;
   left: 20%;
   animation-delay: 0s;
 }
 
-.circle2 {
+.circle:nth-child(2) {
   width: 200px;
   height: 200px;
   top: 50%;
@@ -45,15 +39,15 @@
   animation-delay: 2s;
 }
 
-.circle3 {
-  width: 400px;
-  height: 400px;
+.circle:nth-child(3) {
+  width: 300px;
+  height: 300px;
   top: 80%;
   left: 10%;
   animation-delay: 4s;
 }
 
-.circle4 {
+.circle:nth-child(4) {
   width: 150px;
   height: 150px;
   top: 30%;
@@ -61,7 +55,7 @@
   animation-delay: 1s;
 }
 
-.circle5 {
+.circle:nth-child(5) {
   width: 350px;
   height: 350px;
   top: 60%;
@@ -69,153 +63,65 @@
   animation-delay: 3s;
 }
 
-.circle6 {
-  width: 250px;
-  height: 250px;
+.circle:nth-child(6) {
+  width: 100px;
+  height: 100px;
   top: 20%;
   left: 80%;
   animation-delay: 5s;
 }
 
-.circle7 {
-  width: 100px;
-  height: 100px;
+.circle:nth-child(7) {
+  width: 180px;
+  height: 180px;
   top: 70%;
   left: 60%;
   animation-delay: 6s;
 }
 
-.circle8 {
-  width: 300px;
-  height: 300px;
+.circle:nth-child(8) {
+  width: 220px;
+  height: 220px;
   top: 40%;
   left: 40%;
   animation-delay: 7s;
 }
 
-/* Keyframes for pulsing effect */
-@keyframes pulse {
-  0%, 100% {
-    transform: scale(1);
-    opacity: 0.5;
-  }
-  50% {
-    transform: scale(1.5);
-    opacity: 0.9;
-  }
-}
-
-/* Keyframes for rotation */
-@keyframes rotate {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-/* Keyframes for horizontal and vertical movement */
-@keyframes moveX {
-  0%, 100% {
-    transform: translate(0, 0);
-  }
-  25% {
-    transform: translate(30px, -20px);
-  }
-  50% {
-    transform: translate(-30px, 20px);
-  }
-  75% {
-    transform: translate(10px, -10px);
-  }
-}
-
-/* Keyframes for color shift */
-@keyframes colorShift {
-  0%, 100% {
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.2), transparent);
-  }
-  50% {
-    background: radial-gradient(circle, rgba(0, 173, 255, 0.3), transparent);
-  }
-}
-
-/* Keyframes for gradient shift */
+/* Gradient animation */
 @keyframes gradientShift {
   0%, 100% {
-    background: linear-gradient(135deg, #1e293b, #0f172a);
+    background: linear-gradient(120deg, #1e293b, #0f172a);
   }
   50% {
-    background: linear-gradient(135deg, #0f172a, #1e293b);
+    background: linear-gradient(120deg, #0f172a, #1e293b);
   }
 }
 
-/* Keyframes for floating hover effect */
-@keyframes hoverFloat {
-  0% {
-    transform: translateY(0);
-  }
-  100% {
-    transform: translateY(-10px);
-  }
-}
-
-/* Add particle-like sparkles */
-.sparkle {
-  position: absolute;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.8);
-  animation: sparkleMove 5s infinite ease-in-out, fadeOut 3s infinite ease-in-out;
-  filter: blur(2px);
-  mix-blend-mode: overlay;
-}
-
-/* Sparkle movement */
-@keyframes sparkleMove {
+/* Floating movement */
+@keyframes float {
   0%, 100% {
     transform: translate(0, 0);
   }
   50% {
-    transform: translate(20px, -30px);
+    transform: translate(20px, -20px);
   }
 }
 
-/* Sparkle fading */
-@keyframes fadeOut {
+/* Scaling effect */
+@keyframes scaleUp {
   0%, 100% {
-    opacity: 1;
+    transform: scale(1);
   }
   50% {
-    opacity: 0;
+    transform: scale(1.4);
   }
 }
-
-/* Add sparkles dynamically */
-.animationContainer .sparkle:nth-child(1) { top: 20%; left: 30%; }
-.animationContainer .sparkle:nth-child(2) { top: 50%; left: 60%; }
-.animationContainer .sparkle:nth-child(3) { top: 80%; left: 10%; }
-.animationContainer .sparkle:nth-child(4) { top: 10%; left: 70%; }
-.animationContainer .sparkle:nth-child(5) { top: 40%; left: 40%; }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .circle {
-    opacity: 0.3;
-    animation-duration: 12s;
-  }
-
-  .circle1,
-  .circle2,
-  .circle3,
-  .circle4,
-  .circle5,
-  .circle6,
-  .circle7,
-  .circle8 {
-    width: 50%;
-    height: 50%;
+    width: 60%;
+    height: 60%;
+    animation-duration: 14s;
   }
 }
