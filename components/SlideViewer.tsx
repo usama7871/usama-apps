@@ -29,7 +29,7 @@ const SlideViewer: React.FC<ExtendedSlideViewerProps> = ({
   const handleZoomIn = () => setZoomLevel((prev) => Math.min(prev + 0.5, 4));
   const handleZoomOut = () => setZoomLevel((prev) => Math.max(prev - 0.5, 1));
 
-  const rotateLeft = () => setRotation((prev) => (prev - 90) % 360);
+  const rotateLeft = () => setRotation((prev) => (prev - 90 + 360) % 360);
   const rotateRight = () => setRotation((prev) => (prev + 90) % 360);
 
   const resetView = () => {
@@ -41,17 +41,18 @@ const SlideViewer: React.FC<ExtendedSlideViewerProps> = ({
     const link = document.createElement('a');
     link.href = images[currentImageIndex];
     link.download = `slide-${currentImageIndex + 1}.jpg`;
+    document.body.appendChild(link);
     link.click();
+    document.body.removeChild(link);
   };
 
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
       document.documentElement.requestFullscreen().catch(console.error);
-      setIsFullscreen(true);
     } else {
       document.exitFullscreen().catch(console.error);
-      setIsFullscreen(false);
     }
+    setIsFullscreen(!isFullscreen);
   };
 
   const currentImageSrc = useMemo(() => images[currentImageIndex], [currentImageIndex, images]);
@@ -70,6 +71,12 @@ const SlideViewer: React.FC<ExtendedSlideViewerProps> = ({
           break;
         case 'ArrowRight':
           changeImage(1);
+          break;
+        case '+':
+          handleZoomIn();
+          break;
+        case '-':
+          handleZoomOut();
           break;
         case 'r':
           resetView();
@@ -117,7 +124,7 @@ const SlideViewer: React.FC<ExtendedSlideViewerProps> = ({
           width: '100%',
         }}
       >
-        <button onClick={() => changeImage(-1)} aria-label="Previous image" disabled={currentImageIndex === 0}>
+        <button onClick={() => changeImage(-1)} aria-label="Previous image">
           &#10094;
         </button>
 
@@ -138,16 +145,16 @@ const SlideViewer: React.FC<ExtendedSlideViewerProps> = ({
           />
         </div>
 
-        <button onClick={() => changeImage(1)} aria-label="Next image" disabled={currentImageIndex === images.length - 1}>
+        <button onClick={() => changeImage(1)} aria-label="Next image">
           &#10095;
         </button>
       </div>
 
       <div className="controls" style={{ marginTop: '1rem', display: 'flex', gap: '10px' }}>
-        <button onClick={handleZoomIn} aria-label="Zoom In" disabled={zoomLevel >= 4}>
+        <button onClick={handleZoomIn} aria-label="Zoom In">
           🔍+
         </button>
-        <button onClick={handleZoomOut} aria-label="Zoom Out" disabled={zoomLevel <= 1}>
+        <button onClick={handleZoomOut} aria-label="Zoom Out">
           🔍-
         </button>
         <button onClick={rotateLeft} aria-label="Rotate Left">
