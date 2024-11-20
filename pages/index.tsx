@@ -9,7 +9,7 @@ const HomePage: React.FC = () => {
       <header
         style={{
           background: 'linear-gradient(135deg, #004d80, #00a3cc)',
-          color: '#fff',
+          color: '#ppp',
           padding: '20px',
         }}
       >
