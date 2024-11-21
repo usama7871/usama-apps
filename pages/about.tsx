@@ -1,3 +1,4 @@
+"use client";
 import React from 'react';
 import { FaUserAlt, FaCode, FaProjectDiagram } from 'react-icons/fa';
 
@@ -47,7 +48,7 @@ const About = () => {
       </header>
 
       {/* Content Section */}
-      <div style={{ lineHeight: '1.8', fontSize: '1.1rem', color: '#333' }}>
+      <div style={{ lineHeight: '1.8', fontSize: '1.1rem', color: '#0099cc' }}>
         <p>
           Hello! My name is <strong>Usama</strong>, and I am a 3rd-year MBBS student. Although I initially chose to pursue
           a career as a doctor, I have decided to transition into the field of software development, driven by my passion for
@@ -89,7 +90,7 @@ const About = () => {
       {/* CTA Section */}
       <div style={{ marginTop: '40px', textAlign: 'center' }}>
         <a
-          href="/projects"
+          href="/"
           style={{
             display: 'inline-block',
             padding: '12px 24px',
