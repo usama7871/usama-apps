@@ -1,3 +1,4 @@
+"use client";
 import Image from 'next/image';
 import { SlideViewerProps } from '../types';
 import { useState, useEffect, useCallback, useMemo } from 'react';
