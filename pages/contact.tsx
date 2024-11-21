@@ -146,7 +146,7 @@ const Contact = () => {
             rel="noopener noreferrer"
             style={{ color: '#004d80', textDecoration: 'none', fontWeight: 'bold' }}
           >
-            instagram.com/usama_abdullah
+            instagram.com/usama.1072
           </a>
         </li>
       </ul>
