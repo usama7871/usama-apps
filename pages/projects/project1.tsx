@@ -1,3 +1,4 @@
+"use client";
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import VideoPlayer from '../../components/VideoPlayer';
 import SlideViewer from '../../components/SlideViewer';
