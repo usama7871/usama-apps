@@ -141,7 +141,7 @@ const Contact = () => {
         >
           <FaInstagram size={25} color="#E4405F" style={{ marginRight: '10px' }} />
           <a
-            href="https://instagram.com/usama_abdullah"
+            href="https://instagram.com/usama.1072"
             target="_blank"
             rel="noopener noreferrer"
             style={{ color: '#004d80', textDecoration: 'none', fontWeight: 'bold' }}
