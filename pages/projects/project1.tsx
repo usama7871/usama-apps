@@ -1,8 +1,9 @@
 "use client";
-import { useEffect, useState, useCallback, useMemo } from 'react';
-import VideoPlayer from '../../components/VideoPlayer';
-import SlideViewer from '../../components/SlideViewer';
-import { FaArrowLeft, FaArrowRight, FaRedo } from 'react-icons/fa';
+
+import { useEffect, useState, useCallback, useMemo } from "react";
+import VideoPlayer from "../../components/VideoPlayer";
+import SlideViewer from "../../components/SlideViewer";
+import { FaArrowLeft, FaArrowRight, FaRedo } from "react-icons/fa";
 
 interface SlideData {
   timestamp: number;
@@ -15,27 +16,28 @@ const Project1: React.FC = () => {
   const [slideTimeline, setSlideTimeline] = useState<SlideData[]>([]);
   const [videoProgress, setVideoProgress] = useState(0);
   const [videoRef, setVideoRef] = useState<HTMLVideoElement | null>(null);
-  const [loadingStatus, setLoadingStatus] = useState<'loading' | 'loaded' | 'error'>('loading');
+  const [loadingStatus, setLoadingStatus] = useState<
+    "loading" | "loaded" | "error"
+  >("loading");
 
-  // Fetch slide metadata
+  // Fetch slide metadata with absolute URL for better reliability
   useEffect(() => {
     const fetchSlideData = async () => {
       try {
-        const response = await fetch('/slideMetadata.json');
-        if (!response.ok) throw new Error('Failed to load slide metadata');
+        const response = await fetch("/slideMetadata.json"); // Ensure this file exists in /public
+        if (!response.ok) throw new Error("Failed to load slide metadata");
         const data = await response.json();
         setSlideTimeline(data.slides);
-        setLoadingStatus('loaded');
+        setLoadingStatus("loaded");
       } catch (error) {
-        console.error('Error fetching slide metadata:', error);
-        setLoadingStatus('error');
+        console.error("Error fetching slide metadata:", error);
+        setLoadingStatus("error");
       }
     };
 
     fetchSlideData();
   }, []);
 
-  // Synchronize slides with video playback
   const handleTimeUpdate = useCallback(
     (currentTime: number) => {
       const matchedSlide = slideTimeline
@@ -52,47 +54,46 @@ const Project1: React.FC = () => {
     [slideTimeline, videoRef]
   );
 
-  // Assign video element reference
   const handleVideoRef = useCallback((ref: HTMLVideoElement) => {
     setVideoRef(ref);
   }, []);
 
-  // Navigate slides manually without syncing video
   const goToSlideManually = useCallback(
     (slideNumber: number) => {
       const targetSlide = slideTimeline.find((s) => s.slide === slideNumber);
       if (targetSlide) {
-        setCurrentSlide(slideNumber); // Update slide without affecting video
+        setCurrentSlide(slideNumber);
       }
     },
     [slideTimeline]
   );
 
-  // Go to the next slide
   const goToNextSlide = useCallback(() => {
     const nextSlide = currentSlide + 1;
     if (nextSlide <= slideTimeline.length) {
       goToSlideManually(nextSlide);
       if (videoRef) {
-        const nextSlideTimestamp = slideTimeline.find(slide => slide.slide === nextSlide)?.timestamp || 0;
-        videoRef.currentTime = nextSlideTimestamp;  // Sync video time with slide timestamp
+        const nextSlideTimestamp =
+          slideTimeline.find((slide) => slide.slide === nextSlide)?.timestamp ||
+          0;
+        videoRef.currentTime = nextSlideTimestamp;
       }
     }
   }, [currentSlide, slideTimeline.length, slideTimeline, videoRef, goToSlideManually]);
 
-  // Go to the previous slide
   const goToPreviousSlide = useCallback(() => {
     const prevSlide = currentSlide - 1;
     if (prevSlide >= 1) {
       goToSlideManually(prevSlide);
       if (videoRef) {
-        const prevSlideTimestamp = slideTimeline.find(slide => slide.slide === prevSlide)?.timestamp || 0;
-        videoRef.currentTime = prevSlideTimestamp;  // Sync video time with slide timestamp
+        const prevSlideTimestamp =
+          slideTimeline.find((slide) => slide.slide === prevSlide)?.timestamp ||
+          0;
+        videoRef.currentTime = prevSlideTimestamp;
       }
     }
   }, [currentSlide, slideTimeline, videoRef, goToSlideManually]);
 
-  // Restart the presentation
   const restartPresentation = useCallback(() => {
     if (videoRef) {
       videoRef.currentTime = 0;
@@ -101,12 +102,11 @@ const Project1: React.FC = () => {
     }
   }, [videoRef]);
 
-  // Handle keyboard shortcuts
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
-      if (event.key === 'ArrowRight') {
+      if (event.key === "ArrowRight") {
         goToNextSlide();
-      } else if (event.key === 'ArrowLeft') {
+      } else if (event.key === "ArrowLeft") {
         goToPreviousSlide();
       }
     },
@@ -114,13 +114,12 @@ const Project1: React.FC = () => {
   );
 
   useEffect(() => {
-    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
     return () => {
-      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener("keydown", handleKeyDown);
     };
   }, [handleKeyDown]);
 
-  // Current slide data
   const currentSlideData = useMemo(
     () => slideTimeline.find((slide) => slide.slide === currentSlide),
     [currentSlide, slideTimeline]
@@ -129,15 +128,14 @@ const Project1: React.FC = () => {
   return (
     <div className="project-container">
       <h1 className="project-title">Topic: The US</h1>
-      {loadingStatus === 'loading' ? (
+      {loadingStatus === "loading" ? (
         <div className="loading-spinner">Loading...</div>
-      ) : loadingStatus === 'error' ? (
+      ) : loadingStatus === "error" ? (
         <p className="error-message" aria-live="assertive">
           Error loading slide data. Please try again later.
         </p>
       ) : (
         <div className="content-wrapper">
-          {/* Video player with progress bar */}
           <div className="video-and-controls">
             <VideoPlayer onTimeUpdate={handleTimeUpdate} setVideoRef={handleVideoRef} />
             <div className="progress-bar" aria-label="Video Progress">
@@ -149,8 +147,6 @@ const Project1: React.FC = () => {
               />
             </div>
           </div>
-
-          {/* Slide viewer with navigation */}
           <div className="slide-and-navigation">
             {currentSlideData && (
               <SlideViewer
@@ -160,7 +156,6 @@ const Project1: React.FC = () => {
               />
             )}
             <div className="button-container">
-              {/* Previous Slide Button */}
               <button
                 className="nav-button"
                 onClick={goToPreviousSlide}
@@ -169,7 +164,6 @@ const Project1: React.FC = () => {
               >
                 <FaArrowLeft />
               </button>
-              {/* Next Slide Button */}
               <button
                 className="nav-button"
                 onClick={goToNextSlide}
@@ -178,8 +172,11 @@ const Project1: React.FC = () => {
               >
                 <FaArrowRight />
               </button>
-              {/* Restart Button */}
-              <button className="restart-button" onClick={restartPresentation} aria-label="Restart Presentation">
+              <button
+                className="restart-button"
+                onClick={restartPresentation}
+                aria-label="Restart Presentation"
+              >
                 <FaRedo />
               </button>
             </div>
