@@ -70,75 +70,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
             © {new Date().getFullYear()} Usama Abdullah. All rights reserved.
           </p>
         </footer>
-      </div>
-
-      {/* Add global styling for responsiveness */}
-      <style jsx global>{`
-        * {
-          margin: 0;
-          padding: 0;
-          box-sizing: border-box;
-        }
-
-        html {
-          font-size: 16px;
-          scroll-behavior: smooth;
-        }
-
-        body {
-          font-family: "Roboto", Arial, sans-serif;
-          background-color: #f9f9f9; /* Fallback background for older browsers */
-          color: #333;
-          overflow-x: hidden;
-        }
-
-        h1,
-        h2,
-        h3,
-        h4,
-        h5,
-        h6 {
-          margin: 0;
-          padding: 0;
-        }
-
-        a {
-          text-decoration: none;
-          color: inherit;
-          transition: color 0.2s ease-in-out;
-        }
-
-        a:hover {
-          color: #00bfff; /* Add hover effect for links */
-        }
-
-        main {
-          padding: 20px;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-
-        @media (max-width: 768px) {
-          html {
-            font-size: 14px; /* Adjust font size for smaller screens */
-          }
-        }
-
-        @media (max-width: 480px) {
-          html {
-            font-size: 13px;
-          }
-
-          header h1 {
-            font-size: 1.2rem;
-          }
-
-          footer {
-            font-size: 0.8rem;
-          }
-        }
-      `}</style>
+      </div>     
     </>
   );
 };
