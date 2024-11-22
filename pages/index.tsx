@@ -1,7 +1,6 @@
-"use client";
 import Link from 'next/link';
 import React from 'react';
-import { FaTwitter, FaGithub, FaLinkedin, FaWhatsapp } from 'react-icons/fa';
+import { FaTwitter, FaGithub,FaInstagram,FaLinkedin, FaWhatsapp } from 'react-icons/fa';
 
 const HomePage: React.FC = () => {
   return (
@@ -29,19 +28,12 @@ const HomePage: React.FC = () => {
         <h2 className="main-title">Explore My Projects</h2>
         <ul className="projects-list">
           <li className="project-item">
-            <Link href="/projects/app">
+            <Link href="/id">
               <button className="project-button">
                 <span role="img" aria-label="Prototype">📚</span> Prototype
               </button>
             </Link>
-          </li>
-          <li className="project-item">
-            <Link href="/projects/project2">
-              <button className="project-button">
-                <span role="img" aria-label="Project 2">🔍</span> Project 2
-              </button>
-            </Link>
-          </li>
+          </li>          
         </ul>
       </main>
 
@@ -54,6 +46,9 @@ const HomePage: React.FC = () => {
           </a>
           <a href="https://github.com/usama7871" target="_blank" rel="noopener noreferrer" className="social-link">
             <FaGithub size={20} /> GitHub
+          </a>
+          <a href="https://instagram.com/usama.1072" target="_blank" rel="noopener noreferrer" className="social-link">
+            <FaInstagram size={20} /> Instagram
           </a>
           <a href="https://www.linkedin.com/in/usama-abdullah-91b693201?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" target="_blank" rel="noopener noreferrer" className="social-link">
             <FaLinkedin size={20} /> LinkedIn
