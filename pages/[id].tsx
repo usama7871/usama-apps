@@ -1,8 +1,6 @@
-"use client";
-
 import { useEffect, useState, useCallback, useMemo } from "react";
-import VideoPlayer from "../../components/VideoPlayer";
-import SlideViewer from "../../components/SlideViewer";
+import VideoPlayer from "../components/VideoPlayer";
+import SlideViewer from "../components/SlideViewer";
 import { FaArrowLeft, FaArrowRight, FaRedo } from "react-icons/fa";
 
 interface SlideData {
@@ -11,7 +9,7 @@ interface SlideData {
   images: string[];
 }
 
-const Project1: React.FC = () => {
+const ProjectPage: React.FC = () => {
   const [currentSlide, setCurrentSlide] = useState(1);
   const [slideTimeline, setSlideTimeline] = useState<SlideData[]>([]);
   const [videoProgress, setVideoProgress] = useState(0);
@@ -187,4 +185,4 @@ const Project1: React.FC = () => {
   );
 };
 
-export default Project1;
+export default ProjectPage;
