@@ -1,4 +1,4 @@
-"use client";
+// "use client";
 import { useRef, useEffect, useState, useCallback, useMemo } from 'react';
 import { VideoPlayerProps } from '../types';
 
