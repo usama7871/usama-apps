@@ -29,7 +29,7 @@ const HomePage: React.FC = () => {
         <h2 className="main-title">Explore My Projects</h2>
         <ul className="projects-list">
           <li className="project-item">
-            <Link href="/projects/project1">
+            <Link href="/projects/app">
               <button className="project-button">
                 <span role="img" aria-label="Prototype">📚</span> Prototype
               </button>
