@@ -1,6 +1,6 @@
 // pages/_app.tsx
 
-import { AppProps } from "next/app";
+import { AppProps } from "next/app";                              
 import Head from "next/head";
 import "../styles/globals.css"; // Ensure this file includes global resets and utility classes
 
